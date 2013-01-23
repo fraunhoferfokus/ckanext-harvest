@@ -1,6 +1,5 @@
+import types
 from logging import getLogger
-
-from pylons import config
 
 from ckan import logic
 from ckan import model
@@ -134,6 +133,17 @@ class Harvest(p.SingletonPlugin, DefaultDatasetForm):
 
         return harvest_source_form_to_db_schema()
 
+    def db_to_form_schema_options(self, options):
+        '''
+            Similar to db_to_form_schema but with further options to allow
+            slightly different schemas, eg for creation or deletion on the API.
+        '''
+        if options.get('type') == 'show':
+            return None
+        else:
+            return self.db_to_form_schema()
+        
+
     def db_to_form_schema(self):
         '''
         Returns the schema for mapping package data from the database into a
@@ -261,7 +271,7 @@ def _get_logic_functions(module_root, logic_functions = {}):
             module = getattr(module, part)
 
         for key, value in module.__dict__.items():
-            if not key.startswith('_'):
+            if not key.startswith('_') and isinstance(value, types.FunctionType):
                 logic_functions[key] = value
 
     return logic_functions
