@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import logging
 import re
 
@@ -20,9 +22,8 @@ from ckanext.harvest.interfaces import IHarvester
 log = logging.getLogger(__name__)
 
 def munge_tag(tag):
-    tag = substitute_ascii_equivalents(tag)
     tag = tag.lower().strip()
-    return re.sub(r'[^a-zA-Z0-9 -]', '', tag).replace(' ', '-')
+    return re.sub(u'[^a-zA-ZÄÖÜäöü0-9 \-_\.]', '', tag).replace(' ', '-')
 
 class HarvesterBase(SingletonPlugin):
     '''
